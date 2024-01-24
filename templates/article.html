@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Let's BBS-文章预览{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        @font-face {
+          font-family: '优设好身体';
+          src: url('/static/fonts/优设好身体.ttf') format('truetype');
+        }
+        body {
+          font-family: '优设好身体';
+        }
+    </style>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>文章预览</h1>
+</div>
+<div class="page_content">
+    <div style="float:left;"><p><font size="2">作者 {{ wz["writer"] }}</font></p></div>
+    <div style="float:right;"><p><font size="2">{{ wz["time"] }}</font></p></div>
+</div>
+<div class="content">
+    <div style="clear:left;clear:right"><p>{{ wz["content"] | safe }}</p></div>
+</div>
+<hr>
+<h3>评论</h3>
+{% for flashed in get_flashed_messages() %}
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  {{ flashed }}
+</div>
+{% endfor %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+{{ wtf.quick_form(form) }}
+<ul>
+  {% for cresult in comments %}
+    <hr><b>{{ cresult['writer'] }}</b>
+    <p>{{ cresult['content'] }}</p>
+    <div align="right">
+        {{ cresult['time'] }}
+        <br>
+    </div>
+
+  {% endfor %}
+</ul>
+{% endblock %}

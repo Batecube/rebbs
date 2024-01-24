@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Let's BBS-自家图床{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        @font-face {
+          font-family: '优设好身体';
+          src: url('/static/fonts/优设好身体.ttf') format('truetype');
+        }
+        body {
+          font-family: '优设好身体';
+        }
+    </style>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>图床Beta</h1>
+</div>
+
+<div class="page_content">
+    {% for flashed in get_flashed_messages() %}
+    <div class="alert alert-danger">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      {{ flashed }}
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

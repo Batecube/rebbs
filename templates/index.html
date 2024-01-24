@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Let's BBS-首页{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        @font-face {
+          font-family: '优设好身体';
+          src: url('/static/fonts/优设好身体.ttf') format('truetype');
+        }
+        body {
+          font-family: '优设好身体';
+        }
+    </style>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>{{ whattime }}</h1>
+</div>
+<p>欢迎使用Let’s BBS Insider，目前呈现内容不代表最终结果</p>
+<p>现已支持Markdown(仅文章)</p>
+<hr>
+
+{% for flashed in get_flashed_messages() %}
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  {{ flashed }}
+</div>
+{% endfor %}
+
+<div class="page_content">
+    <p>Hello,{% if name %}{{ name }}{% else %}Guest{% endif %}!留下点什么呗？</p>
+</div>
+{% import "bootstrap/wtf.html" as wtf %}
+{{ wtf.quick_form(form) }}
+<ul>
+  {% for cresult in rescont %}
+    <hr><b>{{ cresult['writer'] }}</b>
+    <p>{{ cresult['content'] | safe }}</p>
+    <div align="right">
+        {{ cresult['time'] }}
+        <br>
+        <a href="/article/{{  cresult['id'] }}">
+            <span class="label label-primary">
+                详情
+            </span>
+        </a>
+    </div>
+
+  {% endfor %}
+</ul>
+
+{% endblock %}

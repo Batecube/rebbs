@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Let's BBS-自家图床{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        @font-face {
+          font-family: '优设好身体';
+          src: url('/static/fonts/优设好身体.ttf') format('truetype');
+        }
+        body {
+          font-family: '优设好身体';
+        }
+    </style>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>图床Beta</h1>
+</div>
+<div class="page_content">
+    <p>由于资源限制，图片最大大小为16M</p>
+    <p><strong>本图床原则上仅用于本站文章使用，请勿用作其他用途</strong></p>
+    <hr>
+    {% for flashed in get_flashed_messages() %}
+    <div class="alert alert-success">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ flashed }}
+        <hr>
+        <p>如一切正常，下方将展示上传图片的Markdown代码</p>
+        <strong>{{ markdownop }}</strong>
+    </div>
+    {% endfor %}
+    <form action="uploadfile" method=post enctype=multipart/form-data>
+     <input type=file name=file id="file-input">
+    <button id="upload-btn" disabled>上传</button>
+    </form>
+    <hr>
+
+</div>
+
+    <script>
+const fileInput = document.getElementById('file-input');
+const uploadBtn = document.getElementById('upload-btn');
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.value) {
+    uploadBtn.disabled = false;
+  } else {
+    uploadBtn.disabled = true;
+  }
+});
+
+
+    </script>
+
+{% endblock %}
