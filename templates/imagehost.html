@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Let's BBS-自家图床{% endblock %}
+{% block title %}{{ webname }}-自家图床{% endblock %}
 
 {% block head %}
     {{ super() }}
@@ -32,10 +32,12 @@
         <strong>{{ markdownop }}</strong>
     </div>
     {% endfor %}
-    <form action="uploadfile" method=post enctype=multipart/form-data>
-     <input type=file name=file id="file-input">
-    <button id="upload-btn" disabled>上传</button>
-    </form>
+    <form action="uploadfile" method="post" enctype="multipart/form-data">  
+      <div class="form-group">  
+          <label for="file">在此上传你的图片吧:</label>  
+          <input type="file" class="form-control-file" id="file" name="file">  
+      </div>  
+      <button type="submit" class="btn btn-primary">上传</button>  
     <hr>
 
 </div>

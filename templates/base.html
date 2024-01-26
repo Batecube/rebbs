@@ -1,6 +1,6 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}Let's BBS{% endblock %}
+{% block title %}{{ webname }}{% endblock %}
 
 {% block scripts %}
 {{ super() }}
@@ -16,7 +16,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Let's BBS!</a>
+            <a class="navbar-brand" href="/">{{ webname }}</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
