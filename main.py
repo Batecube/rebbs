@@ -1,6 +1,7 @@
 '''
 本次变动：
-1.允许markdown使用超链接
+1.fix bug
+2. add webname set
 '''
 from flask import Flask,render_template,session,redirect,url_for,flash,send_from_directory,request
 from flask_bootstrap import Bootstrap
@@ -120,6 +121,7 @@ class POSTForm(FlaskForm):
     submit = SubmitField('确认')
 
 class CONFIGForm(FlaskForm):
+    setname = StringField('设置站点昵称',validators=[DataRequired()])
     seturl = StringField('本站URL（对外访问的地址，如http://example.com/）',validators=[DataRequired()])
     setlocal = StringField('本地IP地址',validators=[DataRequired()])
     setport = StringField('监听端口',validators=[DataRequired()])
@@ -142,15 +144,15 @@ def getwhen():
 
 @app.errorhandler(413)
 def file_out_of_size(e):
-    return render_template('413.html'), 413    
+    return render_template('413.html',webname=webname), 413    
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return render_template('404.html',webname=webname), 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('500.html'), 500
+    return render_template('500.html',webname=webname), 500
 
 #主页
 
@@ -166,14 +168,16 @@ def index():
         session['body'] = form.body.data
         newaricle()
         return redirect(url_for('index'))       
-    return render_template('index.html',whattime=getwhen(),form=form,name=hisname,rescont=tryfinding())
+    return render_template('index.html',whattime=getwhen(),form=form,name=hisname,rescont=tryfinding(),webname=webname)
 #index 变量解释：whattime:反馈早中晚，form:表单，name:名字,rescont:文章全局
 
 #文章详情
 @app.route('/article/<artid>',methods=['GET','POST'])
 def article(artid):
     getartcont=open("config.txt","r",encoding="utf-8-sig")
-    cont=getartcont.read()
+    trygetcont=getartcont.read()
+    trygetcont=eval(trygetcont)
+    cont=trygetcont['cont']
     getartcont.close()
     #try:
     if  0<=int(artid)<int(cont):
@@ -205,7 +209,7 @@ def article(artid):
             artall.write(str(atra))
             artall.close()
 
-            return redirect(url_for('article',artid=artid))
+            return redirect(url_for('article',artid=artid,webname=webname))
         artall = open("{}/article/{}.txt".format(cwd, artid), 'r', encoding="utf-8-sig")
         artcm = artall.read()
         artcm = eval(artcm)
@@ -214,7 +218,7 @@ def article(artid):
         artcm = artcm[::-1]
         artall.close()
 
-        return render_template('article.html', wz=wz,form=form,name=hisname,comments=artcm)
+        return render_template('article.html', wz=wz,form=form,name=hisname,comments=artcm,webname=webname)
     else:
         return render_template('404.html'), 404
     #except:
@@ -224,13 +228,13 @@ def article(artid):
 
 @app.route('/imagehost',methods=['GET','POST'])
 def imagehost():
-    return render_template('imagehost.html')
+    return render_template('imagehost.html',webname=webname)
 
 #上传图片
 
 @app.route('/upload/<filename>/',methods=['GET','POST'])
 def upload(filename):
-    return send_from_directory(cwd+'/upload',filename)
+    return send_from_directory(cwd+'/upload',filename,webname=webname)
 
 #上传图片后所发生的事件
 
@@ -243,7 +247,7 @@ def uploadfile():
     if os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], file.filename)):
         #os.remove(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))# 如果文件已经存在，就删除
         flash("呜呜，已存在该文件")
-        return render_template('failed.html')
+        return render_template('failed.html',webname=webname)
     # 检查文件类型是否允许上传
     if file and allowed_file(file.filename):
         # 保存文件到指定路径
@@ -251,11 +255,11 @@ def uploadfile():
         # 重定向到上传成功页面，并传递文件名参数
         flash("恭喜！已成功上传，以下将会出现一条Markdown代码。注意，这将只会出现一次，请妥善保存")
         markdownop = '![' + file.filename + '](' + urled + 'upload/' + file.filename + ')'
-        return render_template('imagehost.html', markdownop=markdownop)
+        return render_template('imagehost.html', markdownop=markdownop,webname=webname)
     else:
         # 返回上传失败的提示信息
         flash("不支持此文件格式")
-        return render_template('failed.html')
+        return render_template('failed.html',webname=webname)
 
 # 显示上传成功页面
 @app.route('/success')
@@ -271,7 +275,8 @@ def success():
 def index():
     if session.get('settoken') == token:
         writeconfig=open("config.txt","w",encoding="utf-8-sig")
-        writedict={'url':'','localip':'','port':'','cont':''}
+        writedict={'name':'','url':'','localip':'','port':'','cont':''}
+        writedict['name'] = session.get('setname')
         writedict['url'] = session.get('seturl')
         writedict['localip']=session.get('setlocal')
         writedict['port'] = session.get('setport')
@@ -288,6 +293,7 @@ def index():
     session['settoken']= None
     form = CONFIGForm()
     if form.validate_on_submit():
+        session['setname'] = form.setname.data
         session['seturl'] = form.seturl.data
         session['setlocal'] = form.setlocal.data
         session['setport'] = form.setport.data
@@ -315,6 +321,7 @@ if __name__=='__main__':
         getartcont=open("config.txt","r",encoding="utf-8-sig")
         trygetcont=getartcont.read()
         trygetcont=eval(trygetcont)
+        webname=trygetcont['name']
         cont=trygetcont['url']
         ip=trygetcont['localip']
         pt=trygetcont['port']
