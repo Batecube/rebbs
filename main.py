@@ -21,7 +21,8 @@ appguide = Flask(__name__)#向导
 app.config['SECRET_KEY']='Kingwho123!'#表单密钥,请填自己的
 appguide.config['SECRET_KEY']='Kingwho123!'
 app.config['FONT_PATH'] = '/static/fonts/YouYuan.ttf'#字体
-app.config['BOOTSTRAP_SERVE_LOCAL'] = False #cdn资源离线化，建议关闭
+app.config['BOOTSTRAP_SERVE_LOCAL'] = True #cdn资源离线化，建议关闭
+appguide.config['BOOTSTRAP_SERVE_LOCAL'] = True
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 #最大上传大小
 app.config['UPLOAD_FOLDER'] = './upload'#上传目录
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'} #设置允许上传的文件后缀名
@@ -234,7 +235,7 @@ def imagehost():
 
 @app.route('/upload/<filename>/',methods=['GET','POST'])
 def upload(filename):
-    return send_from_directory(cwd+'/upload',filename,webname=webname)
+    return send_from_directory(cwd+'/upload',filename)
 
 #上传图片后所发生的事件
 
