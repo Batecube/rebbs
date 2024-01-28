@@ -38,6 +38,6 @@ Re:BBS是简单的BBS服务端，它基于Python Flask包并使用Bootstrap模�
 ### 20240125
 1.加入引导页以便快速写入config配置文件
 
-2.修了bug（比如Markdown超链接未正常现实）
+2.修了bug（比如Markdown超链接未正常显示）
 
 *顺便一提，英文README并非机翻，但由于个人能力不足，可能存在错误*
