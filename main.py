@@ -8,26 +8,22 @@ from flask_bootstrap import Bootstrap
 from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField,TextAreaField
-from werkzeug.exceptions import HTTPException, BadRequest
 from wtforms.validators import DataRequired
 from markdown import markdown
 import bleach
-import time
 import os
 import uuid
 #模块
 app = Flask(__name__)#主bbs系统
 appguide = Flask(__name__)#向导
-app.config['SECRET_KEY']='Kingwho123!'#表单密钥,请填自己的
 appguide.config['SECRET_KEY']='Kingwho123!'
-app.config['FONT_PATH'] = '/static/fonts/YouYuan.ttf'#字体
-app.config['BOOTSTRAP_SERVE_LOCAL'] = True #cdn资源离线化，建议关闭
+app.config['FONT_PATH'] = '/static/fonts/优设好身体.ttf'#字体
 appguide.config['BOOTSTRAP_SERVE_LOCAL'] = True
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 #最大上传大小
 app.config['UPLOAD_FOLDER'] = './upload'#上传目录
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'} #设置允许上传的文件后缀名
-bootstrap = Bootstrap(app)
-bootstrap = Bootstrap(appguide)
+Bootstrap(app)
+Bootstrap(appguide)
 cwd = os.getcwd().replace("\\", "/")
 
 
@@ -90,7 +86,6 @@ def tryfinding():
 #新建文章（主逻辑）
 
 def newaricle():
-
     getartcont=open("config.txt","r",encoding="utf-8-sig")
     trygetcont=getartcont.read()
     trygetcont=eval(trygetcont)
@@ -126,6 +121,8 @@ class CONFIGForm(FlaskForm):
     seturl = StringField('本站URL（对外访问的地址，如http://example.com/）',validators=[DataRequired()])
     setlocal = StringField('本地IP地址',validators=[DataRequired()])
     setport = StringField('监听端口',validators=[DataRequired()])
+    setoffline = StringField('资源离线化（True/False,非离线部署请不要启用）', validators=[DataRequired()])
+    setpassword = StringField('表单密钥（输入任意强字符串，防跨站攻击）', validators=[DataRequired()])
     settoken = StringField('确认token（在服务端命令行显示）',validators=[DataRequired()])
     submit = SubmitField('保存并应用')
 
@@ -145,7 +142,7 @@ def getwhen():
 
 @app.errorhandler(413)
 def file_out_of_size(e):
-    return render_template('413.html',webname=webname), 413    
+    return render_template('413.html',webname=webname), 413
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -217,6 +214,9 @@ def article(artid):
         del artcm[0]
 
         artcm = artcm[::-1]
+        if len(artcm)>0:
+            for i in range(len(artcm)):
+                artcm[i]['content'] = markdowned(artcm[i]['content'])
         artall.close()
 
         return render_template('article.html', wz=wz,form=form,name=hisname,comments=artcm,webname=webname)
@@ -230,6 +230,10 @@ def article(artid):
 @app.route('/imagehost',methods=['GET','POST'])
 def imagehost():
     return render_template('imagehost.html',webname=webname)
+
+@app.route('/markdownhelp',methods=['GET','POST'])
+def markdownhelp():
+    return render_template('markdown.html',webname=webname)
 
 #上传图片
 
@@ -276,11 +280,13 @@ def success():
 def index():
     if session.get('settoken') == token:
         writeconfig=open("config.txt","w",encoding="utf-8-sig")
-        writedict={'name':'','url':'','localip':'','port':'','cont':''}
+        writedict={'name':'','url':'','localip':'','port':'','offline':'','password':'','cont':''}
         writedict['name'] = session.get('setname')
         writedict['url'] = session.get('seturl')
         writedict['localip']=session.get('setlocal')
         writedict['port'] = session.get('setport')
+        writedict['offline'] = session.get('setoffline')
+        writedict['password'] = session.get('setpassword')
         
         folder_path = "{}/article".format(cwd) 
         file_count = len([f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))])
@@ -298,6 +304,8 @@ def index():
         session['seturl'] = form.seturl.data
         session['setlocal'] = form.setlocal.data
         session['setport'] = form.setport.data
+        session['setoffline'] = form.setoffline.data
+        session['setpassword'] = form.setpassword.data
         session['settoken'] = form.settoken.data
         return redirect(url_for('index')) 
     
@@ -326,6 +334,8 @@ if __name__=='__main__':
         cont=trygetcont['url']
         ip=trygetcont['localip']
         pt=trygetcont['port']
+        app.config['BOOTSTRAP_SERVE_LOCAL'] = bool(trygetcont['offline'])  # cdn资源离线化，建议关闭
+        app.config['SECRET_KEY'] = trygetcont['password']  # 表单密钥,请填自己的
         getartcont.close()
         urled=cont #域名，事关upload
         app.run(host=ip,port=pt,threaded=True)
