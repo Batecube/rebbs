@@ -10,6 +10,10 @@ Create folders('upload'and'article') in root directories before use.
 *Now only supporting Chinese!*
 ***
 ## Lastest Update
+### 20240226
+1.Supporting comments with Markdown
+
+2.Fix bug
 ### 20240126
 1.Allow custom website name
 
@@ -31,6 +35,10 @@ Re:BBS是简单的BBS服务端，它基于Python Flask包并使用Bootstrap模�
 *目前仅支持中文！*
 ***
 ## 近期更新
+### 20240126
+1.支持评论使用Markdown
+
+2.修了bug
 ### 20240126
 1.允许自定义站点名称
 
