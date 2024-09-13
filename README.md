@@ -12,6 +12,9 @@ Create folders('upload'and'article') in root directories before use.
 *Currently in beta version, there will be no backward compatibility.*
 ***
 ## Lastest Update
+### 20240913
+1.Fixed historical legacy issues and increased fault tolerance
+
 ### 20240226
 1.Supporting comments with Markdown
 
@@ -39,6 +42,9 @@ Re:BBS是简单的BBS服务端，它基于Python Flask包并使用Bootstrap模�
 *现为Beta版本，不会做任何向下兼容。*
 ***
 ## 近期更新
+### 20240913
+1.一句话概括：修复了历史遗留问题，增强容错
+
 ### 20240126
 1.支持评论使用Markdown
 
