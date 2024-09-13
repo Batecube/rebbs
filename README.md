@@ -8,6 +8,8 @@ Now it has the basic bbs system(supporting Markdown) and a simple imagehost.
 Create folders('upload'and'article') in root directories before use.
 
 *Now only supporting Chinese!*
+
+*Currently in beta version, there will be no backward compatibility.*
 ***
 ## Lastest Update
 ### 20240226
@@ -33,6 +35,8 @@ Re:BBS是简单的BBS服务端，它基于Python Flask包并使用Bootstrap模�
 使用之前请提前在它根目录下创建'upload'和'article'空文件夹
 
 *目前仅支持中文！*
+
+*现为Beta版本，不会做任何向下兼容。*
 ***
 ## 近期更新
 ### 20240126
