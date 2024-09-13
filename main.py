@@ -26,6 +26,31 @@ Bootstrap(app)
 Bootstrap(appguide)
 cwd = os.getcwd().replace("\\", "/")
 
+if not os.path.exists(cwd+'/article'):
+    os.makedirs(cwd+'/article')
+if not os.path.exists(cwd+'/upload'):
+    os.makedirs(cwd+'/upload')
+
+def check_file_exists(file_path):
+    if os.path.isfile(file_path):
+        return True
+    else:
+        return False
+
+file_path = "{}/config.txt".format(cwd)
+if check_file_exists(file_path):
+
+    folder_path = "{}/article".format(cwd)
+    file_count = len([f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))])
+    writeconfig = open("config.txt", "r", encoding="utf-8-sig")
+    ContTmp = writeconfig.read()
+    ContTmp = eval(ContTmp)
+    ContTmp['cont'] = file_count
+    writeconfig.close()
+    writeconfig = open("config.txt", "w", encoding="utf-8-sig")
+    writeconfig.write(str(ContTmp))
+    writeconfig.close()
+
 
 #markdown过滤并转换html
 
@@ -299,6 +324,12 @@ def index():
         flash("请检查token是否正确")
     session['settoken']= None
     form = CONFIGForm()
+    form.setname.data = 'Re:BBS'
+    form.seturl.data = 'http://example.com/'
+    form.setlocal.data = '0.0.0.0'
+    form.setport.data = '80'
+    form.setoffline.data = 'False'
+    form.setpassword.data = str(uuid.uuid4()) #随机密码
     if form.validate_on_submit():
         session['setname'] = form.setname.data
         session['seturl'] = form.seturl.data
@@ -311,11 +342,7 @@ def index():
     
     return render_template('guide.html',form=form)
 
-def check_file_exists(file_path):  
-    if os.path.isfile(file_path):  
-        return True  
-    else:  
-        return False
+
 
 #main入口
 if __name__=='__main__':
