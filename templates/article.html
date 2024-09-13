@@ -40,7 +40,7 @@
 <ul>
   {% for cresult in comments %}
     <hr><b>{{ cresult['writer'] }}</b>
-    <p>{{ cresult['content'] }}</p>
+    <p>{{ cresult['content'] | safe }}</p>
     <div align="right">
         {{ cresult['time'] }}
         <br>
